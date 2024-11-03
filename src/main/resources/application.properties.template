@@ -1,0 +1,3 @@
+spring.application.name={DB_NAME}
+spring.datasource.url={DB_URL}
+spring.datasource.username={DB_USER}
