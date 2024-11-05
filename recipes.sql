@@ -8,6 +8,7 @@ USE `recipes_app`;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(64) DEFAULT NULL,
+  `password` TEXT DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;

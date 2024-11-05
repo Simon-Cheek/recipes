@@ -27,6 +27,9 @@ public class Recipe {
     public Recipe() {
     }
 
+    @ManyToOne
+    private User user;
+
     public Recipe(String name, String description, int userId) {
         this.name = name;
         this.description = description;

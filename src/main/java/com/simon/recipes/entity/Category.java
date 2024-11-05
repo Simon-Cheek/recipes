@@ -22,6 +22,9 @@ public class Category {
     @Column(name = "user_id")
     private int userId;
 
+    @ManyToOne
+    private User user;
+
     @ManyToMany
     @JoinTable(
             name = "recipe_category",
