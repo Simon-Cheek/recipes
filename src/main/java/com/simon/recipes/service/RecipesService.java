@@ -10,6 +10,8 @@ public interface RecipesService {
 
     Optional<User> getUser(int userId);
 
+    User getFullUser(int userId);
+
     User getUser(String username);
 
     void saveUser(User user);

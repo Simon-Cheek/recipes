@@ -31,6 +31,11 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    public User getFullUser(int userId) {
+        return this.userRepository.findUserWithRecipesAndIngredients(userId);
+    }
+
+    @Override
     public User getUser(String username) {
         return this.userRepository.findByUsername(username);
     }
