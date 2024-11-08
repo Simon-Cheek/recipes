@@ -1,5 +1,6 @@
 package com.simon.recipes.service;
 
+import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
@@ -41,8 +42,13 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public void saveUser(User user) {
-        this.userRepository.save(user);
+    public int saveUser(User user) {
+        return this.userRepository.save(user).getId();
+    }
+
+    @Override
+    public int createUser(UserInfo user) {
+        return this.userRepository.save(new User(user.username(), user.password(), user.description())).getId();
     }
 
     @Override

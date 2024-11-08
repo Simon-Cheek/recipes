@@ -18,22 +18,20 @@ public class Recipe {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "user_id")
-    private int userId;
-
     @ManyToMany(mappedBy = "recipes")
     Set<Category> categories;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Recipe() {
     }
 
-    @ManyToOne
-    private User user;
-
-    public Recipe(String name, String description, int userId) {
+    public Recipe(String name, String description, User user) {
         this.name = name;
         this.description = description;
-        this.userId = userId;
+        this.user = user;
     }
 
     public int getId() {
@@ -60,14 +58,6 @@ public class Recipe {
         this.description = description;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public Set<Category> getCategories() {
         return categories;
     }
@@ -82,7 +72,7 @@ public class Recipe {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + userId +
-                '}';
+                ", user='" + (user != null ? user.getUsername() : "null") +
+                "'" + '}';
     }
 }

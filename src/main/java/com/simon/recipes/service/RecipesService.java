@@ -1,5 +1,6 @@
 package com.simon.recipes.service;
 
+import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
@@ -14,7 +15,9 @@ public interface RecipesService {
 
     User getUser(String username);
 
-    void saveUser(User user);
+    int saveUser(User user);
+
+    int createUser(UserInfo user);
 
     void deleteUser(int userId);
 

@@ -1,12 +1,10 @@
 package com.simon.recipes.server;
 
+import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.User;
 import com.simon.recipes.service.RecipesService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -27,5 +25,12 @@ public class RecipesServer {
         Optional<User> user = service.getUser(Integer.parseInt(userId));
         if (user.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         return user;
+    }
+
+    @PostMapping("/user")
+    public int createNewUser(@RequestBody UserInfo user) {
+        if (user.username() == null || user.password() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include username and password");
+        return this.service.createUser(user);
     }
 }

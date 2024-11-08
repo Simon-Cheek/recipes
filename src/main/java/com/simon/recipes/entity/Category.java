@@ -19,10 +19,8 @@ public class Category {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "user_id")
-    private int userId;
-
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToMany
@@ -36,10 +34,10 @@ public class Category {
     public Category() {
     }
 
-    public Category(String name, String description, int userId) {
+    public Category(String name, String description, User user) {
         this.name = name;
         this.description = description;
-        this.userId = userId;
+        this.user = user;
     }
 
     public int getId() {
@@ -66,14 +64,6 @@ public class Category {
         this.description = description;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public Set<Recipe> getRecipes() {
         return recipes;
     }
@@ -88,8 +78,8 @@ public class Category {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + userId +
-                '}';
+                ", user='" + (user != null ? user.getUsername() : "null") +
+                "'" + '}';
     }
 }
 
