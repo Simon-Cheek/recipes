@@ -19,6 +19,11 @@ public class RecipesServer {
         this.service = service;
     }
 
+    @GetMapping("/test")
+    public String testApi() {
+        return "The API is working!";
+    }
+
     @GetMapping("/user")
     public Optional<User> getUserById(@RequestParam(value = "id") String userId) {
         if (userId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id empty or not valid");

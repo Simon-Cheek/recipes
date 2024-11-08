@@ -7,10 +7,12 @@ import com.simon.recipes.entity.User;
 import com.simon.recipes.repository.CategoryRepository;
 import com.simon.recipes.repository.RecipeRepository;
 import com.simon.recipes.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RecipesServiceImpl implements RecipesService {
@@ -32,8 +34,16 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public User getFullUser(int userId) {
-        return this.userRepository.findUserWithRecipesAndIngredients(userId);
+
+        Optional<User> optUser = this.userRepository.findById(userId);
+        if (optUser.isPresent()) {
+            User user = optUser.get();
+            Set<Recipe> recipes = user.getRecipes();
+            Set<Category> categories = user.getCategories();
+            return user;
+        } else return null;
     }
 
     @Override
