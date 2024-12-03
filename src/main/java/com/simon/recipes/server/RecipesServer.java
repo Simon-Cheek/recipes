@@ -34,6 +34,9 @@ public class RecipesServer {
 
     @PostMapping("/user")
     public int createNewUser(@RequestBody UserInfo user) {
+        User checkUser = this.service.getUser(user.username());
+        if (checkUser != null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
         if (user.username() == null || user.password() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include username and password");
         return this.service.createUser(user);

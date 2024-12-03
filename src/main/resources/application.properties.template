@@ -4,3 +4,10 @@ spring.datasource.username={DB_USER}
 spring.datasource.password={DB_PASSWORD}
 spring.main.banner-mode=off
 logging.level.root=warn
+
+# Include error messages in the response
+server.error.include-message=always
+server.error.include-binding-errors=always
+
+# Include the cause of the error (optional)
+server.error.include-stacktrace=never
