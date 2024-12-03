@@ -1,6 +1,8 @@
 package com.simon.recipes.server;
 
+import com.simon.recipes.dto.RecipeCreation;
 import com.simon.recipes.dto.UserInfo;
+import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
 import com.simon.recipes.service.RecipesService;
 import org.springframework.http.HttpStatus;
@@ -40,5 +42,14 @@ public class RecipesServer {
         if (user.username() == null || user.password() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include username and password");
         return this.service.createUser(user);
+    }
+
+    @PostMapping("/recipe")
+    public void createNewRecipe(@RequestBody RecipeCreation recipeCreation) {
+        Optional<User> user = this.getUserById(recipeCreation.userId());
+        if (user.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+        Recipe newRecipe = new Recipe(recipeCreation.recipeName(), recipeCreation.recipeDesc(), user.get());
+        this.service.saveRecipe(newRecipe);
     }
 }
