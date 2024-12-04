@@ -57,7 +57,7 @@ public class RecipesServer {
     public void deleteRecipe(@RequestBody int recipeId) {
         Optional<Recipe> recipe = this.service.getRecipe(recipeId);
         if (recipe.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist!");
         this.service.deleteRecipe(recipeId);
     }
 }
