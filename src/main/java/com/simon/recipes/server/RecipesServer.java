@@ -52,4 +52,12 @@ public class RecipesServer {
         Recipe newRecipe = new Recipe(recipeCreation.recipeName(), recipeCreation.recipeDesc(), user.get());
         this.service.saveRecipe(newRecipe);
     }
+
+    @DeleteMapping("/recipe")
+    public void deleteRecipe(@RequestBody int recipeId) {
+        Optional<Recipe> recipe = this.service.getRecipe(recipeId);
+        if (recipe.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+        this.service.deleteRecipe(recipeId);
+    }
 }
