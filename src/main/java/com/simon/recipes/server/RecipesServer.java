@@ -48,16 +48,26 @@ public class RecipesServer {
     public void createNewRecipe(@RequestBody RecipeCreation recipeCreation) {
         Optional<User> user = this.getUserById(recipeCreation.userId());
         if (user.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist");
         Recipe newRecipe = new Recipe(recipeCreation.recipeName(), recipeCreation.recipeDesc(), user.get());
         this.service.saveRecipe(newRecipe);
+    }
+
+    @PutMapping("/recipe")
+    public void updateNewRecipe(@RequestBody Recipe recipe) {
+        if (recipe.getId() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include an ID field");
+        Optional<Recipe> fetchedRecipe = this.service.getRecipe(recipe.getId());
+        if (fetchedRecipe.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
+        this.service.saveRecipe(recipe);
     }
 
     @DeleteMapping("/recipe")
     public void deleteRecipe(@RequestBody int recipeId) {
         Optional<Recipe> recipe = this.service.getRecipe(recipeId);
         if (recipe.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
         this.service.deleteRecipe(recipeId);
     }
 }
