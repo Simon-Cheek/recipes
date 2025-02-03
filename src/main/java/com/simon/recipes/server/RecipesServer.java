@@ -22,6 +22,12 @@ public class RecipesServer {
         this.service = service;
     }
 
+    @GetMapping("/health")
+    public String health() {
+        return "Healthy";
+    }
+
+    // TODO: Move Business logic to SERVICE layer
     @GetMapping("/user")
     public Optional<User> getUserById(@RequestParam(value = "id") String userId) {
         if (userId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id empty or not valid");

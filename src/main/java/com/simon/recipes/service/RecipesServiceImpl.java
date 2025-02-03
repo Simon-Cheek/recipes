@@ -40,8 +40,8 @@ public class RecipesServiceImpl implements RecipesService {
         Optional<User> optUser = this.userRepository.findById(userId);
         if (optUser.isPresent()) {
             User user = optUser.get();
-            Set<Recipe> recipes = user.getRecipes();
-            Set<Category> categories = user.getCategories();
+            user.getRecipes(); // Trigger lazy loading
+            user.getCategories();
             return user;
         } else return null;
     }
