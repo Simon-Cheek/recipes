@@ -1,9 +1,13 @@
 package com.simon.recipes.service;
 
+import com.simon.recipes.dto.ItemDTO;
 import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
+import com.simon.recipes.exceptions.InvalidRequestException;
+import com.simon.recipes.exceptions.MissingInfoException;
+import com.simon.recipes.exceptions.ResourceNotFoundException;
 import com.simon.recipes.repository.CategoryRepository;
 import com.simon.recipes.repository.RecipeRepository;
 import com.simon.recipes.repository.UserRepository;
@@ -12,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class RecipesServiceImpl implements RecipesService {
@@ -29,8 +32,15 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public Optional<User> getUser(int userId) {
-        return this.userRepository.findById(userId);
+    public User getUser(int userId) {
+        return this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public User getUser(String username) {
+        User user = this.userRepository.findByUsername(username);
+        if (user == null) { throw new ResourceNotFoundException("User not found"); }
+        return user;
     }
 
     @Override
@@ -47,17 +57,17 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public User getUser(String username) {
-        return this.userRepository.findByUsername(username);
-    }
-
-    @Override
     public int saveUser(User user) {
         return this.userRepository.save(user).getId();
     }
 
     @Override
     public int createUser(UserInfo user) {
+        if (user == null || user.username() == null || user.password() == null || user.username().isEmpty()) {
+            throw new MissingInfoException("Incomplete User");
+        }
+        User checkUser = this.userRepository.findByUsername(user.username());
+        if (checkUser != null) { throw new InvalidRequestException("User already exists"); }
         return this.userRepository.save(new User(user.username(), user.password(), user.description())).getId();
     }
 
@@ -72,9 +82,34 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public void saveRecipe(Recipe recipe) {
-        this.recipeRepository.save(recipe);
+    public int saveRecipe(ItemDTO recipe) {
+        if (recipe == null || recipe.itemName() == null) {
+            throw new MissingInfoException("Incomplete Recipe");
+        }
+        this.getUser(recipe.userId()); // Verify user exists
+        Recipe existingRecipe = this.recipeRepository.findById(Integer.parseInt(recipe.itemId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        existingRecipe.setName(recipe.itemName());
+        existingRecipe.setDescription(recipe.itemDesc());
+        // TODO: Set categories as well
+        this.recipeRepository.save(existingRecipe);
+        return existingRecipe.getId();
     }
+    @Override
+    public int createRecipe(ItemDTO recipeCreation) {
+        if (recipeCreation == null || recipeCreation.itemName() == null) {
+            throw new MissingInfoException("Incomplete Recipe");
+        }
+        User user = this.getUser(recipeCreation.userId());
+        Optional<Recipe> checkRecipe = this.recipeRepository.findByNameAndUser(recipeCreation.itemName(), user);
+        if (checkRecipe.isPresent()) {
+            throw new InvalidRequestException("Recipe already exists");
+        }
+        Recipe newRecipe = new Recipe(recipeCreation.itemName(), recipeCreation.itemDesc(), user);
+        this.recipeRepository.save(newRecipe);
+        return newRecipe.getId();
+    }
+
 
     @Override
     public void deleteRecipe(int recipeId) {

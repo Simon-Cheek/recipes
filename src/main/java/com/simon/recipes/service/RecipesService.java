@@ -1,5 +1,6 @@
 package com.simon.recipes.service;
 
+import com.simon.recipes.dto.ItemDTO;
 import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface RecipesService {
 
-    Optional<User> getUser(int userId);
+    User getUser(int userId);
 
     User getFullUser(int userId);
 
@@ -23,7 +24,9 @@ public interface RecipesService {
 
     Optional<Recipe> getRecipe(int recipeId);
 
-    void saveRecipe(Recipe recipe);
+    int createRecipe(ItemDTO recipeDTO);
+
+    int saveRecipe(ItemDTO recipeDTO);
 
     void deleteRecipe(int recipeId);
 

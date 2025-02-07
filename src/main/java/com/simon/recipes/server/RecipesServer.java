@@ -1,6 +1,6 @@
 package com.simon.recipes.server;
 
-import com.simon.recipes.dto.ItemCreation;
+import com.simon.recipes.dto.ItemDTO;
 import com.simon.recipes.dto.UserInfo;
 import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
@@ -27,42 +27,24 @@ public class RecipesServer {
         return "Healthy";
     }
 
-    // TODO: Move Business logic to SERVICE layer
     @GetMapping("/user")
-    public Optional<User> getUserById(@RequestParam(value = "id") String userId) {
-        if (userId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id empty or not valid");
-        Optional<User> user = service.getUser(Integer.parseInt(userId));
-        if (user.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        return user;
+    public User getUserById(@RequestParam(value = "id") int userId) {
+        return service.getUser(userId);
     }
 
     @PostMapping("/user")
     public int createNewUser(@RequestBody UserInfo user) {
-        User checkUser = this.service.getUser(user.username());
-        if (checkUser != null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
-        if (user.username() == null || user.password() == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include username and password");
         return this.service.createUser(user);
     }
 
     @PostMapping("/recipe")
-    public void createNewRecipe(@RequestBody ItemCreation itemCreation) {
-        Optional<User> user = this.getUserById(itemCreation.userId());
-        if (user.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist");
-        Recipe newRecipe = new Recipe(itemCreation.itemName(), itemCreation.itemDesc(), user.get());
-        this.service.saveRecipe(newRecipe);
+    public int createNewRecipe(@RequestBody ItemDTO recipeDTO) {
+        return this.service.saveRecipe(recipeDTO);
     }
 
     @PutMapping("/recipe")
-    public void updateRecipe(@RequestBody Recipe recipe) {
-        if (recipe.getId() == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include an ID field");
-        Optional<Recipe> fetchedRecipe = this.service.getRecipe(recipe.getId());
-        if (fetchedRecipe.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
-        this.service.saveRecipe(recipe);
+    public int updateRecipe(@RequestBody ItemDTO recipeDTO) {
+        return this.service.saveRecipe(recipeDTO);
     }
 
     @DeleteMapping("/recipe")
@@ -74,7 +56,7 @@ public class RecipesServer {
     }
 
     @PostMapping("/category")
-    public void createNewCategory(@RequestBody ItemCreation itemCreation) {
+    public void createNewCategory(@RequestBody ItemDTO itemCreation) {
         Optional<User> user = this.getUserById(itemCreation.userId());
         if (user.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist");
