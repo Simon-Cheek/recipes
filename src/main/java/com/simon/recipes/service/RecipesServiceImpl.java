@@ -117,10 +117,12 @@ public class RecipesServiceImpl implements RecipesService {
         return newCategory.getId();
     }
 
-
     @Override
-    public void deleteRecipe(int recipeId) {
+    public int deleteRecipe(int recipeId) {
+        Optional<Recipe> checkRecipe = this.recipeRepository.findById(recipeId);
+        if (checkRecipe.isEmpty()) { throw new ResourceNotFoundException("Recipe not found"); }
         this.recipeRepository.deleteById(recipeId);
+        return recipeId;
     }
 
     @Override
@@ -129,12 +131,19 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public void saveCategory(Category category) {
+    public int saveCategory(Category category) {
+        if (category == null || category.getName() == null) {
+            throw new MissingInfoException("Incomplete Category");
+        }
         this.categoryRepository.save(category);
+        return category.getId();
     }
 
     @Override
-    public void deleteCategory(int categoryId) {
+    public int deleteCategory(int categoryId) {
+        Optional<Category> checkCategory = this.categoryRepository.findById(categoryId);
+        if (checkCategory.isEmpty()) { throw new ResourceNotFoundException("Category not found"); }
         this.categoryRepository.deleteById(categoryId);
+        return categoryId;
     }
 }

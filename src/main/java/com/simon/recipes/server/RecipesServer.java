@@ -48,11 +48,8 @@ public class RecipesServer {
     }
 
     @DeleteMapping("/recipe")
-    public void deleteRecipe(@RequestBody Integer recipeId) {
-        Optional<Recipe> recipe = this.service.getRecipe(recipeId);
-        if (recipe.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
-        this.service.deleteRecipe(recipeId);
+    public int deleteRecipe(@RequestBody Integer recipeId) {
+        return this.service.deleteRecipe(recipeId);
     }
 
     @PostMapping("/category")
@@ -61,20 +58,12 @@ public class RecipesServer {
     }
 
     @PutMapping("/category")
-    public void updateCategory(@RequestBody Category category) {
-        if (category.getId() == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must include an ID field");
-        Optional<Category> fetchedCategory = this.service.getCategory(category.getId());
-        if (fetchedCategory.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category does not exist");
-        this.service.saveCategory(category);
+    public int updateCategory(@RequestBody Category category) {
+        return this.service.saveCategory(category);
     }
 
     @DeleteMapping("/category")
-    public void deleteCategory(@RequestBody Integer categoryId) {
-        Optional<Category> category = this.service.getCategory(categoryId);
-        if (category.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
-        this.service.deleteRecipe(categoryId);
+    public int deleteCategory(@RequestBody Integer categoryId) {
+        return this.service.deleteCategory(categoryId);
     }
 }

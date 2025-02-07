@@ -28,14 +28,14 @@ public interface RecipesService {
 
     int saveRecipe(Recipe recipe);
 
-    void deleteRecipe(int recipeId);
+    int deleteRecipe(int recipeId);
 
     int createCategory(ItemDTO categoryDTO);
 
     Optional<Category> getCategory(int categoryId);
 
-    void saveCategory(Category category);
+    int saveCategory(Category category);
 
-    void deleteCategory(int categoryId);
+    int deleteCategory(int categoryId);
 
 }
