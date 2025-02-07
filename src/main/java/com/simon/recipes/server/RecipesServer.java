@@ -39,12 +39,12 @@ public class RecipesServer {
 
     @PostMapping("/recipe")
     public int createNewRecipe(@RequestBody ItemDTO recipeDTO) {
-        return this.service.saveRecipe(recipeDTO);
+        return this.service.createRecipe(recipeDTO);
     }
 
     @PutMapping("/recipe")
-    public int updateRecipe(@RequestBody ItemDTO recipeDTO) {
-        return this.service.saveRecipe(recipeDTO);
+    public int updateRecipe(@RequestBody Recipe recipe) {
+        return this.service.saveRecipe(recipe);
     }
 
     @DeleteMapping("/recipe")
@@ -56,12 +56,8 @@ public class RecipesServer {
     }
 
     @PostMapping("/category")
-    public void createNewCategory(@RequestBody ItemDTO itemCreation) {
-        Optional<User> user = this.getUserById(itemCreation.userId());
-        if (user.isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist");
-        Category newCategory = new Category(itemCreation.itemName(), itemCreation.itemDesc(), user.get());
-        this.service.saveCategory(newCategory);
+    public int createNewCategory(@RequestBody ItemDTO itemCreation) {
+        return this.service.createCategory(itemCreation);
     }
 
     @PutMapping("/category")

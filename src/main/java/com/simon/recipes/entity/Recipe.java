@@ -38,6 +38,10 @@ public class Recipe {
         return id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

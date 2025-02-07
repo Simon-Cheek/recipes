@@ -13,6 +13,7 @@ import com.simon.recipes.repository.RecipeRepository;
 import com.simon.recipes.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -82,19 +83,14 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
-    public int saveRecipe(ItemDTO recipe) {
-        if (recipe == null || recipe.itemName() == null) {
+    public int saveRecipe(Recipe recipe) {
+        if (recipe == null || recipe.getName() == null) {
             throw new MissingInfoException("Incomplete Recipe");
         }
-        this.getUser(recipe.userId()); // Verify user exists
-        Recipe existingRecipe = this.recipeRepository.findById(Integer.parseInt(recipe.itemId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
-        existingRecipe.setName(recipe.itemName());
-        existingRecipe.setDescription(recipe.itemDesc());
-        // TODO: Set categories as well
-        this.recipeRepository.save(existingRecipe);
-        return existingRecipe.getId();
+        this.recipeRepository.save(recipe);
+        return recipe.getId();
     }
+
     @Override
     public int createRecipe(ItemDTO recipeCreation) {
         if (recipeCreation == null || recipeCreation.itemName() == null) {
@@ -108,6 +104,17 @@ public class RecipesServiceImpl implements RecipesService {
         Recipe newRecipe = new Recipe(recipeCreation.itemName(), recipeCreation.itemDesc(), user);
         this.recipeRepository.save(newRecipe);
         return newRecipe.getId();
+    }
+
+    @Override
+    public int createCategory(ItemDTO categoryCreation) {
+        if (categoryCreation == null || categoryCreation.itemName() == null) {
+            throw new MissingInfoException("Incomplete Recipe");
+        }
+        User user = this.getUser(categoryCreation.userId());
+        Category newCategory = new Category(categoryCreation.itemName(), categoryCreation.itemDesc(), user);
+        this.categoryRepository.save(newCategory);
+        return newCategory.getId();
     }
 
 

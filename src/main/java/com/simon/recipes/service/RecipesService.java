@@ -26,9 +26,11 @@ public interface RecipesService {
 
     int createRecipe(ItemDTO recipeDTO);
 
-    int saveRecipe(ItemDTO recipeDTO);
+    int saveRecipe(Recipe recipe);
 
     void deleteRecipe(int recipeId);
+
+    int createCategory(ItemDTO categoryDTO);
 
     Optional<Category> getCategory(int categoryId);
 
