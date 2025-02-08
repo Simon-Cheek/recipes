@@ -52,6 +52,7 @@ public class RecipesServiceImpl implements RecipesService {
         Optional<User> optUser = this.userRepository.findById(userId);
         if (optUser.isPresent()) {
             User user = optUser.get();
+            // Force initialization of typically lazy loaded fields
             Hibernate.initialize(user.getCategories());
             Hibernate.initialize(user.getRecipes());
             return user;
