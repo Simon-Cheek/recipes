@@ -12,6 +12,7 @@ import com.simon.recipes.repository.CategoryRepository;
 import com.simon.recipes.repository.RecipeRepository;
 import com.simon.recipes.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -51,8 +52,8 @@ public class RecipesServiceImpl implements RecipesService {
         Optional<User> optUser = this.userRepository.findById(userId);
         if (optUser.isPresent()) {
             User user = optUser.get();
-            user.getRecipes(); // Trigger lazy loading
-            user.getCategories();
+            Hibernate.initialize(user.getCategories());
+            Hibernate.initialize(user.getRecipes());
             return user;
         } else return null;
     }
@@ -107,11 +108,12 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public int createCategory(ItemDTO categoryCreation) {
         if (categoryCreation == null || categoryCreation.itemName() == null) {
             throw new MissingInfoException("Incomplete Recipe");
         }
-        User user = this.getUser(categoryCreation.userId());
+        User user = this.getUser(Integer.parseInt(categoryCreation.userId()));
         Category newCategory = new Category(categoryCreation.itemName(), categoryCreation.itemDesc(), user);
         this.categoryRepository.save(newCategory);
         return newCategory.getId();
