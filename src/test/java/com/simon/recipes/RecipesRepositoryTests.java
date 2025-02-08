@@ -10,26 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RecipesApplicationTests {
+class RecipesRepositoryTests {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private RecipesServiceImpl recipesService;
 
 	// REPOSITORY TESTS
 	@Test
 	void createsAUser() {
 		userRepository.save(new User("John", "Doe", "john@doe.com"));
-		Assertions.assertNotNull(userRepository.findByUsername("John"));
-		userRepository.delete(userRepository.findByUsername("John"));
-	}
-
-	// SERVICE TESTS
-	@Test
-	void createsAUserFromService() {
-		recipesService.createUser(new UserInfo("John", "Doe", "john@doe.com"));
 		Assertions.assertNotNull(userRepository.findByUsername("John"));
 		userRepository.delete(userRepository.findByUsername("John"));
 	}
