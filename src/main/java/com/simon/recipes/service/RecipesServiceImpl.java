@@ -65,6 +65,7 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public int createUser(UserInfo user) {
         if (user == null || user.username() == null || user.password() == null || user.username().isEmpty()) {
             throw new MissingInfoException("Incomplete User");
@@ -94,11 +95,12 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public int createRecipe(ItemDTO recipeCreation) {
         if (recipeCreation == null || recipeCreation.itemName() == null) {
             throw new MissingInfoException("Incomplete Recipe");
         }
-        User user = this.getUser(recipeCreation.userId());
+        User user = this.getUser(Integer.parseInt(recipeCreation.userId()));
         Optional<Recipe> checkRecipe = this.recipeRepository.findByNameAndUser(recipeCreation.itemName(), user);
         if (checkRecipe.isPresent()) {
             throw new InvalidRequestException("Recipe already exists");
@@ -121,6 +123,7 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public int deleteRecipe(int recipeId) {
         Optional<Recipe> checkRecipe = this.recipeRepository.findById(recipeId);
         if (checkRecipe.isEmpty()) { throw new ResourceNotFoundException("Recipe not found"); }
@@ -143,6 +146,7 @@ public class RecipesServiceImpl implements RecipesService {
     }
 
     @Override
+    @Transactional
     public int deleteCategory(int categoryId) {
         Optional<Category> checkCategory = this.categoryRepository.findById(categoryId);
         if (checkCategory.isEmpty()) { throw new ResourceNotFoundException("Category not found"); }

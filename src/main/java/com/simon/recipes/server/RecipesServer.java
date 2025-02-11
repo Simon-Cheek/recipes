@@ -6,11 +6,8 @@ import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
 import com.simon.recipes.service.RecipesService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")

@@ -18,14 +18,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class RecipesServiceTests {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private RecipesServiceImpl recipesService;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    RecipesServiceTests(UserRepository userRepository, RecipesServiceImpl recipesService) {
+        this.userRepository = userRepository;
+        this.recipesService = recipesService;
+    }
 
     @Test
     @Transactional
@@ -75,6 +78,26 @@ class RecipesServiceTests {
 
         Assertions.assertNotNull(fullUser.getCategories());
         Assertions.assertEquals(1, fullUser.getCategories().size());
+    }
+
+    @Test
+    @Transactional
+    void canAddRecipeToUser() {
+        try {
+            userRepository.delete(userRepository.findByUsername("John1"));
+        } catch (Exception ignored) {} // Delete user if exists
+        int userId = recipesService.createUser(new UserInfo("John1", "Doe", "john@doe.com"));
+        ItemDTO newRecipe = new ItemDTO(String.valueOf(userId), "New Recipe", "Test Recipe55", null);
+        recipesService.createRecipe(newRecipe);
+
+        // Flush and clear session to make sure the changes are reflected when using @Transactional
+        entityManager.flush();
+        entityManager.clear();
+
+        User fullUser = recipesService.getFullUser(userId);
+
+        Assertions.assertNotNull(fullUser.getRecipes());
+        Assertions.assertEquals(1, fullUser.getRecipes().size());
     }
 
 }

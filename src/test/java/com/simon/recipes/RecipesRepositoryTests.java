@@ -12,8 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class RecipesRepositoryTests {
 
-	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	RecipesRepositoryTests(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
 	// REPOSITORY TESTS
 	@Test
