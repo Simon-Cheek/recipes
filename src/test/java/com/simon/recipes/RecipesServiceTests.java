@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
+@Transactional
 @SpringBootTest
 class RecipesServiceTests {
 
@@ -31,7 +31,6 @@ class RecipesServiceTests {
     }
 
     @Test
-    @Transactional
     void createsAUser() {
         recipesService.createUser(new UserInfo("John1234", "Doe", "john@doe.com"));
         Assertions.assertNotNull(userRepository.findByUsername("John1234"));
@@ -39,7 +38,6 @@ class RecipesServiceTests {
     }
 
     @Test
-    @Transactional
     void capturesUserId() {
         try {
             userRepository.delete(userRepository.findByUsername("John1234"));
@@ -50,7 +48,6 @@ class RecipesServiceTests {
     }
 
     @Test
-    @Transactional
     void deletesWithUserId() {
         try {
             userRepository.delete(userRepository.findByUsername("John1234"));
@@ -61,7 +58,6 @@ class RecipesServiceTests {
     }
 
     @Test
-    @Transactional
     void canAddCategoryToUser() {
         try {
             userRepository.delete(userRepository.findByUsername("John1"));
@@ -81,7 +77,6 @@ class RecipesServiceTests {
     }
 
     @Test
-    @Transactional
     void canAddRecipeToUser() {
         try {
             userRepository.delete(userRepository.findByUsername("John1"));
