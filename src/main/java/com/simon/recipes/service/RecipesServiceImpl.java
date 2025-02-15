@@ -192,7 +192,25 @@ public class RecipesServiceImpl implements RecipesService {
 
         this.categoryRepository.save(category);
         this.recipeRepository.save(recipe);
+    }
 
+    @Override
+    @Transactional
+    public void deleteRecipeFromCategory(int recipeId, int categoryId) {
+        Recipe recipe = this.recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        Category category = this.categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        if (!category.getRecipes().contains(recipe)) {
+            throw new InvalidRequestException("Recipe already not in category");
+        }
+
+        category.getRecipes().remove(recipe);
+        recipe.getCategories().remove(category);
+
+        this.categoryRepository.save(category);
+        this.recipeRepository.save(recipe);
     }
 
 }

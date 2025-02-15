@@ -190,8 +190,47 @@ class RecipesServiceTests {
 
         Assertions.assertTrue(category.getRecipes().contains(recipe));
         Assertions.assertTrue(recipe.getCategories().contains(category));
+    }
 
+    @Test
+    void canDeleteRecipeFromCategory() {
+        try {
+            userRepository.delete(userRepository.findByUsername("John1"));
+        } catch (Exception ignored) {} // Delete user if exists
 
+        // Create new recipe and category and add to user
+        int userId = recipesService.createUser(new UserInfo("John1", "Doe", "john@doe.com"));
+        ItemDTO newCategory = new ItemDTO(String.valueOf(userId), "New Category", "Test Category55", null);
+        int categoryID = recipesService.createCategory(newCategory);
+
+        ItemDTO newRecipe = new ItemDTO(String.valueOf(userId), "New Recipe", "Test Recipe55", null);
+        int recipeID = recipesService.createRecipe(newRecipe);
+
+        // Flush and clear session to make sure the changes are reflected when using @Transactional
+        entityManager.flush();
+        entityManager.clear();
+
+        recipesService.addRecipeToCategory(recipeID, categoryID);
+
+        // Make sure recipe was actually added
+        Recipe rec = recipesService.getRecipe(recipeID).orElseThrow();
+        Assertions.assertNotNull(rec.getCategories());
+        Assertions.assertEquals(1, rec.getCategories().size());
+
+        recipesService.deleteRecipeFromCategory(recipeID, categoryID);
+
+        // Recipe and Category should both still exist
+        User fullUser = recipesService.getFullUser(userId);
+        Assertions.assertNotNull(fullUser.getCategories());
+        Assertions.assertNotNull(fullUser.getRecipes());
+        Set<Category> categories = fullUser.getCategories();
+        Set<Recipe> recipes = fullUser.getRecipes();
+
+        // Recipe and Category should not be tied to each other
+        Recipe recipe = recipes.iterator().next();
+        Category category = categories.iterator().next();
+        Assertions.assertFalse(category.getRecipes().contains(recipe));
+        Assertions.assertFalse(recipe.getCategories().contains(category));
     }
 
 }

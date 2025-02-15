@@ -39,11 +39,8 @@ public interface RecipesService {
     int deleteCategory(int categoryId);
 
     void addRecipeToCategory(int recipeId, int categoryId);
-//
-//    void deleteRecipeFromCategory(int recipeId, int categoryId);
-//
-//    void addCategoryToRecipe(int categoryId, int recipeId);
-//
-//    void deleteCategoryFromRecipe(int categoryId, int recipeId);
+
+    void deleteRecipeFromCategory(int recipeId, int categoryId);
+
 
 }
