@@ -2,6 +2,7 @@ package com.simon.recipes;
 
 import com.simon.recipes.dto.ItemDTO;
 import com.simon.recipes.dto.UserInfo;
+import com.simon.recipes.entity.Category;
 import com.simon.recipes.entity.Recipe;
 import com.simon.recipes.entity.User;
 import com.simon.recipes.exceptions.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Transactional
 @SpringBootTest
@@ -156,4 +158,41 @@ class RecipesServiceTests {
         Assertions.assertEquals(0, fullUser2.getCategories().size());
     }
 
+    @Test
+    void canAddRecipeToCategory() {
+        try {
+            userRepository.delete(userRepository.findByUsername("John1"));
+        } catch (Exception ignored) {} // Delete user if exists
+
+        // Create new recipe and category and add to user
+        int userId = recipesService.createUser(new UserInfo("John1", "Doe", "john@doe.com"));
+        ItemDTO newCategory = new ItemDTO(String.valueOf(userId), "New Category", "Test Category55", null);
+        int categoryID = recipesService.createCategory(newCategory);
+
+        ItemDTO newRecipe = new ItemDTO(String.valueOf(userId), "New Recipe", "Test Recipe55", null);
+        int recipeID = recipesService.createRecipe(newRecipe);
+
+        // Flush and clear session to make sure the changes are reflected when using @Transactional
+        entityManager.flush();
+        entityManager.clear();
+
+        recipesService.addRecipeToCategory(recipeID, categoryID);
+
+        User fullUser = recipesService.getFullUser(userId);
+        Assertions.assertNotNull(fullUser.getCategories());
+        Assertions.assertNotNull(fullUser.getRecipes());
+
+        Set<Category> categories = fullUser.getCategories();
+        Set<Recipe> recipes = fullUser.getRecipes();
+
+        Recipe recipe = recipes.iterator().next();
+        Category category = categories.iterator().next();
+
+        Assertions.assertTrue(category.getRecipes().contains(recipe));
+        Assertions.assertTrue(recipe.getCategories().contains(category));
+
+
+    }
+
 }
+

@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RecipesServiceImpl implements RecipesService {
@@ -177,4 +178,21 @@ public class RecipesServiceImpl implements RecipesService {
         this.categoryRepository.deleteById(categoryId);
         return categoryId;
     }
+
+    @Override
+    @Transactional
+    public void addRecipeToCategory(int recipeId, int categoryId) {
+        Recipe recipe = this.recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        Category category = this.categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        category.getRecipes().add(recipe);
+        recipe.getCategories().add(category);
+
+        this.categoryRepository.save(category);
+        this.recipeRepository.save(recipe);
+
+    }
+
 }
