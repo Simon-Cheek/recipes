@@ -40,6 +40,10 @@ public class Category {
         this.user = user;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public Integer getId() {
         return id;
     }

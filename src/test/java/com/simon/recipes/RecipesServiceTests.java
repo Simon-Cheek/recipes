@@ -127,4 +127,33 @@ class RecipesServiceTests {
         Assertions.assertEquals(0, fullUser2.getRecipes().size());
     }
 
+    @Test
+    void canRemoveCategoryFromUser() {
+        try {
+            userRepository.delete(userRepository.findByUsername("John1"));
+        } catch (Exception ignored) {} // Delete user if exists
+        int userId = recipesService.createUser(new UserInfo("John1", "Doe", "john@doe.com"));
+        ItemDTO newCategory = new ItemDTO(String.valueOf(userId), "New Category", "Test Category55", null);
+        int categoryID = recipesService.createCategory(newCategory);
+
+        // Flush and clear session to make sure the changes are reflected when using @Transactional
+        entityManager.flush();
+        entityManager.clear();
+
+        User fullUser = recipesService.getFullUser(userId);
+
+        Assertions.assertNotNull(fullUser.getCategories());
+        Assertions.assertEquals(1, fullUser.getCategories().size());
+
+        // Delete and make sure User no longer has recipe
+        recipesService.deleteCategory(categoryID);
+
+        User fullUser2 = recipesService.getFullUser(userId);
+        // Make sure Recipe Deletion doesn't delete a user
+        Assertions.assertNotNull(fullUser2);
+
+        Assertions.assertNotNull(fullUser2.getCategories());
+        Assertions.assertEquals(0, fullUser2.getCategories().size());
+    }
+
 }

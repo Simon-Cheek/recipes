@@ -163,6 +163,17 @@ public class RecipesServiceImpl implements RecipesService {
     public int deleteCategory(int categoryId) {
         Optional<Category> checkCategory = this.categoryRepository.findById(categoryId);
         if (checkCategory.isEmpty()) { throw new ResourceNotFoundException("Category not found"); }
+        Category category = checkCategory.get();
+        User user = category.getUser();
+        if (user != null) {
+            user.getCategories().remove(category);  // Remove the recipe from the user's set
+        }
+
+        // Remove the recipe from all associated categories
+        for (Recipe recipe : category.getRecipes()) {
+            recipe.getCategories().remove(category);
+        }
+        category.getRecipes().clear(); // Clear categories to ensure consistency
         this.categoryRepository.deleteById(categoryId);
         return categoryId;
     }
